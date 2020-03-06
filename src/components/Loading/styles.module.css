@@ -1,0 +1,15 @@
+.root {
+
+}
+
+.loading {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loadingIcon {
+  width: 50px;
+  height: 50px;
+}

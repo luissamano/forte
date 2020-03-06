@@ -1,0 +1,20 @@
+.root {
+  /* // color: red; */
+}
+
+.contenedor_flex {
+  display: flex;
+  flex-direction: row;
+}
+
+
+.form {
+  width: 320px;
+  /* // margin: 3em auto 0 auto; */
+  text-align: let;
+  margin: 10rem auto 0 auto;
+  padding: 2rem;
+  -webkit-box-shadow: 5px 5px 30px 5px #000000; 
+  box-shadow: .5px .5px 20px .5px #000000;
+    
+}

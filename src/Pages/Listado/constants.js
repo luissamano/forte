@@ -9,13 +9,23 @@ export const initialState = {
     telefonoMovil: '',
     domicilio: '',
     limiteCredito: 0,
-    estatusClienteId: 0,
+    estatusClienteId: 1,
   },
   reload: false,
-  loading: false,
-  error: null,
+  loadingClientes: false,
+  errorClientes: null,
+  loadingCliente: false,
+  errorCliente: null,
+  saveClienteLoading: false,
+  saveClienteError: null,
+  deleteClienteLoading: false,
+  deleteClienteError: null,
+  updateClienteLoading: false,
+  updateClienteError: null,
 };
 
 export const dialogInitialState = {
   visible: false,
 };
+
+export const dialogTypeDefault = 'save';

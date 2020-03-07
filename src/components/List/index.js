@@ -2,9 +2,16 @@ import React from 'react';
 import Loading from '../Loading';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
-import {} from 'react-md';
+import { Button } from 'react-md';
 
-const List = ({ data }) => {
+const styles = {
+  display: 'flex',
+  justifyContent: 'space-evenly',
+  alignItems: 'center',
+  marginTop: '.3rem',
+};
+
+const List = ({ data, handleDelete, handleUpdate }) => {
   const { row, column } = data;
 
   if (column === undefined) {
@@ -25,6 +32,22 @@ const List = ({ data }) => {
             {row.map(({ key }) => (
               <td key={key}>{item[key]}</td>
             ))}
+            <div style={styles}>
+              <Button
+                flat
+                primary
+                // swapTheming
+                label='Editar'
+                onClick={event => handleUpdate(event, item.clienteId)}
+              />
+              <Button
+                flat
+                secondary
+                // swapTheming
+                label='Eliminar'
+                onClick={() => handleDelete(item.clienteId)}
+              />
+            </div>
           </tr>
         ))}
       </tbody>
@@ -45,6 +68,8 @@ List.propTypes = {
     row: PropTypes.array.isRequired,
     column: PropTypes.array,
   }),
+  handleDelete: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
 };
 
 export default List;

@@ -4,7 +4,11 @@ import { reducer } from './reducer';
 import { actions } from './actions';
 import { dateFormat } from '../../Utils/dateFormat';
 import { axiosAuth } from '../../Utils/axiosAuth';
-import { initialState, dialogInitialState } from './constants';
+import {
+  initialState,
+  dialogInitialState,
+  dialogTypeDefault,
+} from './constants';
 
 import Formulario from './form';
 import List from '../../components/List';
@@ -19,6 +23,7 @@ export const ClienteContext = createContext();
 const Listado = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [dialog, setDialog] = useState(dialogInitialState);
+  const [dialogType, setDialogType] = useState(dialogTypeDefault);
 
   useEffect(() => {
     const { fetchClientes, fetchClientesError, fetchClientesSuccess } = actions;
@@ -55,6 +60,7 @@ const Listado = () => {
 
   const showForm = () => {
     setDialog({ visible: true });
+    setDialogType('save');
   };
 
   const hideForm = () => {
@@ -84,7 +90,6 @@ const Listado = () => {
     } = actions;
 
     const data = {
-      clienteId: parseInt(cliente.clienteId),
       nombreCompleto: cliente.nombreCompleto,
       rfc: cliente.rfc,
       fechaNacimiento: dateFormat(cliente.fechaNacimiento),
@@ -92,7 +97,7 @@ const Listado = () => {
       telefonoMovil: cliente.telefonoMovil,
       domicilio: cliente.domicilio,
       limiteCredito: parseFloat(cliente.limiteCredito),
-      estatusClienteId: 1,
+      estatusClienteId: parseInt(cliente.estatusClienteId),
     };
 
     dispatch({ type: saveCliente });
@@ -103,6 +108,83 @@ const Listado = () => {
       setDialog(dialogInitialState);
     } catch (error) {
       dispatch({ type: saveClienteError, payload: error });
+    }
+  };
+
+  const handleDelete = async id => {
+    const {
+      deleteCliente,
+      deleteClienteSuccess,
+      deleteClienteError,
+      setReload,
+    } = actions;
+
+    dispatch({ type: deleteCliente });
+    try {
+      await axiosAuth.delete(
+        `http://forteinnovation.mx:8590/api/cliente/${id}`
+      );
+      dispatch({ type: deleteClienteSuccess });
+      dispatch({ type: setReload });
+    } catch (error) {
+      dispatch({ type: deleteClienteError, payload: error });
+    }
+  };
+
+  const handleUpdate = async (event, id) => {
+    const {
+      fetchClienteId,
+      fetchClienteIdSuccess,
+      fetchClienteIdError,
+    } = actions;
+
+    dispatch({ type: fetchClienteId });
+
+    try {
+      const res = await axiosAuth.get(
+        `http://forteinnovation.mx:8590/api/cliente/${id}`
+      );
+      setDialog({ visible: true });
+      setDialogType('update');
+      dispatch({ type: fetchClienteIdSuccess, payload: res.data.data });
+    } catch (error) {
+      dispatch({ type: fetchClienteIdError, payload: error });
+    }
+  };
+
+  const handleUpdateForm = async () => {
+    const {
+      setReload,
+      updateCliente,
+      updateClienteSuccess,
+      updateClienteError,
+    } = actions;
+    dispatch({ type: updateCliente });
+
+    const { cliente } = state;
+
+    const data = {
+      clienteId: parseInt(cliente.clienteId),
+      nombreCompleto: cliente.nombreCompleto,
+      rfc: cliente.rfc,
+      fechaNacimiento: dateFormat(cliente.fechaNacimiento),
+      correoElectronico: cliente.correoElectronico,
+      telefonoMovil: cliente.telefonoMovil,
+      domicilio: cliente.domicilio,
+      limiteCredito: parseFloat(cliente.limiteCredito),
+      estatusClienteId: parseInt(cliente.estatusClienteId),
+    };
+
+    try {
+      await axiosAuth.put(
+        `http://forteinnovation.mx:8590/api/cliente/${cliente.clienteId}`,
+        data
+      );
+      dispatch({ type: updateClienteSuccess });
+      setDialog({ visible: false });
+      dispatch({ type: setReload });
+    } catch (error) {
+      dispatch({ type: updateClienteError, payload: error });
     }
   };
 
@@ -134,6 +216,9 @@ const Listado = () => {
               showForm,
               hideForm,
               saveForm,
+              dialogType,
+              handleDelete,
+              handleUpdateForm,
               onChange: setter,
             }}
           >
@@ -142,9 +227,16 @@ const Listado = () => {
           <div className={styles.btn}>
             <Button label='Agregar' onClick={showForm} raised primary />
           </div>
-          <List data={dataTable} />
+          <div class='table-responsive'>
+            <List
+              data={dataTable}
+              handleDelete={handleDelete}
+              handleUpdate={handleUpdate}
+            />
+          </div>
         </div>
       )}
+      {/* {error && <ErrorMsg errorMsg='Hubo un error al obtener los datos' />} */}
     </div>
   );
 };

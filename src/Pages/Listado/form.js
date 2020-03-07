@@ -1,9 +1,22 @@
 import React, { useContext } from 'react';
-import { TextField, DialogContainer, DatePicker } from 'react-md';
+import { TextField, DialogContainer, DatePicker, SelectField } from 'react-md';
 import { ClienteContext } from './index';
 
 const Formulario = () => {
-  const { dialog, hideForm, saveForm, onChange } = useContext(ClienteContext);
+  const {
+    state,
+    dialog,
+    hideForm,
+    saveForm,
+    dialogType,
+    handleUpdateForm,
+    onChange,
+  } = useContext(ClienteContext);
+
+  const STATUS_ITEMS = [
+    { label: 'Activo', value: 1 },
+    { label: 'Inactivo', value: 0 },
+  ];
 
   const actions = [
     {
@@ -15,9 +28,9 @@ const Formulario = () => {
     },
     {
       primary: true,
-      children: 'Guaradar',
+      children: 'Guardar',
       onClick: () => {
-        saveForm();
+        dialogType === 'save' ? saveForm() : handleUpdateForm();
       },
     },
   ];
@@ -27,7 +40,7 @@ const Formulario = () => {
       <DialogContainer
         id='modal'
         visible={dialog.visible}
-        title='Nuevo cliente'
+        title={dialogType === 'save' ? 'Nuevo Cliente' : 'Actualizar Cliente'}
         onHide={hideForm}
         aria-describedby='speed-boost-description'
         actions={actions}
@@ -35,16 +48,10 @@ const Formulario = () => {
         width={1000}
       >
         <TextField
-          label='Id del cliente'
-          className='mx-2'
-          type='number'
-          id='clienteId'
-          onChange={onChange('clienteId')}
-        />
-        <TextField
           type='text'
           label='Nombre'
           id='nombreCompleto'
+          value={state.cliente.nombreCompleto}
           onChange={onChange('nombreCompleto')}
         />
         <TextField
@@ -52,23 +59,27 @@ const Formulario = () => {
           className='mx-2'
           type='text'
           id='rfc'
+          value={state.cliente.rfc}
           onChange={onChange('rfc')}
         />
 
         <DatePicker
           id='fechaNacimiento'
           inline
+          autoOk
           fullWidth={false}
           label='Nacimiento'
-          type='text'
+          type='date'
+          value={state.cliente.fechaNacimiento}
           onChange={onChange('fechaNacimiento')}
         />
 
         <TextField
           label='Correo'
-          className='mx-2'
+          className='md-cell'
           type='text'
           id='correoElectronico'
+          value={state.cliente.correoElectronico}
           onChange={onChange('correoElectronico')}
         />
 
@@ -77,6 +88,7 @@ const Formulario = () => {
           className='mx-2'
           type='text'
           id='telefonoMovil'
+          value={state.cliente.telefonoMovil}
           onChange={onChange('telefonoMovil')}
         />
 
@@ -85,6 +97,7 @@ const Formulario = () => {
           className='mx-2'
           type='text'
           id='domicilio'
+          value={state.cliente.domicilio}
           onChange={onChange('domicilio')}
         />
 
@@ -93,7 +106,18 @@ const Formulario = () => {
           className='mx-2'
           type='number'
           id='limiteCredito'
+          value={state.cliente.limiteCredito}
           onChange={onChange('limiteCredito')}
+        />
+        <SelectField
+          id='estatusClienteId'
+          label='Estatus'
+          placeholder='Estatus cliente ID'
+          className='md-cell'
+          menuItems={STATUS_ITEMS}
+          position={SelectField.Positions.BELOW}
+          value={state.cliente.estatusClienteId}
+          onChange={onChange('estatusClienteId')}
         />
       </DialogContainer>
     </div>

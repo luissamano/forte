@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './styles.moudle.css';
+import './styles.moudle.css';
 
 const ErrorMsg = ({ errorMsg }) => {
-  return <h1 className={styles.msg}>{errorMsg}</h1>;
+  return (
+    <div class='mx-auto' style={{ width: '600px' }}>
+      <h1>{errorMsg}</h1>
+    </div>
+  );
 };
 
 ErrorMsg.defaultProps = {

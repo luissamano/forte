@@ -1,0 +1,11 @@
+.logout {
+  color: white;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.logout:hover {
+  transition-duration: 400ms;
+  background: red;
+  border-radius: 5px;
+}

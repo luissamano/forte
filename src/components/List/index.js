@@ -1,21 +1,31 @@
 import React from 'react';
-import Loading from '../Loading';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 import { Button } from 'react-md';
-
-const styles = {
-  display: 'flex',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
-  marginTop: '.3rem',
-};
 
 const List = ({ data, handleDelete, handleUpdate }) => {
   const { row, column } = data;
 
   if (column === undefined) {
-    return <Loading />;
+    return (
+      <Table>
+        <thead>
+          <tr>
+            {row.map(({ title }, idx) => (
+              <th key={idx}>{title}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style={{ textAlign: 'center', color: 'black' }}
+            colSpan={row.length + 1}
+          >
+            <td>No hay datos que mostrar!</td>
+          </tr>
+        </tbody>
+      </Table>
+    );
   }
   return (
     <Table striped>
@@ -32,7 +42,14 @@ const List = ({ data, handleDelete, handleUpdate }) => {
             {row.map(({ key }) => (
               <td key={key}>{item[key]}</td>
             ))}
-            <div style={styles}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                marginTop: '.3rem',
+              }}
+            >
               <Button
                 flat
                 primary
@@ -51,14 +68,6 @@ const List = ({ data, handleDelete, handleUpdate }) => {
           </tr>
         ))}
       </tbody>
-      {/* {Object.keys(clientes).map(key => {
-        return (
-          <div className={styles.item}>
-            Id: {clientes[key].clienteId}
-            Nombre: {clientes[key].nombreCompleto}
-          </div>
-        );
-      })} */}
     </Table>
   );
 };

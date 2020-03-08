@@ -11,7 +11,7 @@ const ErrorMsg = ({ errorMsg }) => {
 };
 
 ErrorMsg.defaultProps = {
-  errorMsg: 'Error',
+  errorMsg: 'La pagina que buscas no existe',
 };
 
 ErrorMsg.propTypes = {

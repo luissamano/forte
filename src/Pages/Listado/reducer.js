@@ -1,4 +1,5 @@
 import { actions } from './actions';
+import { dateFormat, dateFormat2 } from '../../Utils/dateFormat';
 
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -12,8 +13,8 @@ export const reducer = (state, action) => {
       return {
         ...state,
         loadingClientes: false,
-        errorClientes: null,
         clientes: action.payload,
+        errorClientes: null,
       };
     case actions.fetchClientesError:
       return {
@@ -38,7 +39,7 @@ export const reducer = (state, action) => {
           clienteId: action.payload.clienteId,
           nombreCompleto: action.payload.nombreCompleto,
           rfc: action.payload.rfc,
-          fechaNacimiento: action.payload.fechaNacimiento,
+          fechaNacimiento: dateFormat2(action.payload.fechaNacimiento),
           correoElectronico: action.payload.correoElectronico,
           telefonoMovil: action.payload.telefonoMovil,
           domicilio: action.payload.domicilio,
@@ -81,7 +82,7 @@ export const reducer = (state, action) => {
         cliente: {
           nombreCompleto: action.payload.nombreCompleto,
           rfc: action.payload.rfc,
-          fechaNacimiento: Date.parse(action.payload.fechaNacimiento),
+          fechaNacimiento: dateFormat(action.payload.fechaNacimiento),
           correoElectronico: action.payload.correoElectronico,
           telefonoMovil: action.payload.telefonoMovil,
           domicilio: action.payload.domicilio,

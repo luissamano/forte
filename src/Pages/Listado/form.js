@@ -67,9 +67,8 @@ const Formulario = () => {
           id='fechaNacimiento'
           inline
           autoOk
-          fullWidth={false}
+          fullWidth={true}
           label='Nacimiento'
-          type='date'
           value={state.cliente.fechaNacimiento}
           onChange={onChange('fechaNacimiento')}
         />

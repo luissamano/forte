@@ -26,8 +26,8 @@ const Login = () => {
         login
       );
       dispatch({ type: loginSuccess, payload: res.data.data });
-      setAuthToken(res.data.data);
       setLoggedIn(true);
+      setAuthToken(res.data.data);
     } catch (error) {
       alert('Algo salio mal, revisa de nuevo las credenciales');
     }

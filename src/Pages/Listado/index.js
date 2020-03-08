@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, createContext, useState } from 'react';
 
 import { reducer } from './reducer';
 import { actions } from './actions';
+import { useAuth } from '../../App/useAuth';
 import { dateFormat } from '../../Utils/dateFormat';
 import { axiosAuth } from '../../Utils/axiosAuth';
 import {
@@ -10,10 +11,11 @@ import {
   dialogTypeDefault,
 } from './constants';
 
+import ErrorMsg from '../Error';
 import Formulario from './form';
 import List from '../../components/List';
+import Header from '../../components/Header';
 import Loading from '../../components/Loading';
-import ErrorMsg from '../Error';
 
 import styles from './styles.module.css';
 import { Button } from 'react-md';
@@ -24,6 +26,8 @@ const Listado = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [dialog, setDialog] = useState(dialogInitialState);
   const [dialogType, setDialogType] = useState(dialogTypeDefault);
+
+  const { logout } = useAuth();
 
   useEffect(() => {
     const { fetchClientes, fetchClientesError, fetchClientesSuccess } = actions;
@@ -55,6 +59,9 @@ const Listado = () => {
   }, [state.reload]);
 
   const setter = name => value => {
+    if (name === 'fechaNacimiento') {
+      value = dateFormat(value);
+    }
     dispatch({ type: actions.setterCliente, name, payload: value });
   };
 
@@ -92,7 +99,7 @@ const Listado = () => {
     const data = {
       nombreCompleto: cliente.nombreCompleto,
       rfc: cliente.rfc,
-      fechaNacimiento: dateFormat(cliente.fechaNacimiento),
+      fechaNacimiento: cliente.fechaNacimiento,
       correoElectronico: cliente.correoElectronico,
       telefonoMovil: cliente.telefonoMovil,
       domicilio: cliente.domicilio,
@@ -167,7 +174,7 @@ const Listado = () => {
       clienteId: parseInt(cliente.clienteId),
       nombreCompleto: cliente.nombreCompleto,
       rfc: cliente.rfc,
-      fechaNacimiento: dateFormat(cliente.fechaNacimiento),
+      fechaNacimiento: cliente.fechaNacimiento,
       correoElectronico: cliente.correoElectronico,
       telefonoMovil: cliente.telefonoMovil,
       domicilio: cliente.domicilio,
@@ -188,7 +195,12 @@ const Listado = () => {
     }
   };
 
-  const { clientes, loading, error } = state;
+  const {
+    clientes,
+    loadingClientes,
+    errorClientes,
+    deleteClienteError,
+  } = state;
 
   const dataTable = {
     row: [
@@ -196,48 +208,53 @@ const Listado = () => {
       { title: 'Nombre', key: 'nombreCompleto' },
       { title: 'Correo', key: 'correoElectronico' },
       { title: 'Edad', key: 'edad' },
-      { title: 'Credito', key: 'limiteCredito' },
+      { title: 'Lim de credito', key: 'limiteCredito' },
+      { title: 'Estatus cliente', key: 'estatusCliente' },
     ],
     column: clientes,
   };
 
-  const showTable = !loading && clientes && !error;
+  const showTable = !loadingClientes && clientes && !deleteClienteError;
 
   return (
-    <div style={{ background: 'white' }}>
-      {loading && <Loading />}
-      {error && <ErrorMsg errorMsg='Hubo un error al obtener los datos' />}
-      {showTable && (
-        <div className={styles.root}>
-          <ClienteContext.Provider
-            value={{
-              state,
-              dialog,
-              showForm,
-              hideForm,
-              saveForm,
-              dialogType,
-              handleDelete,
-              handleUpdateForm,
-              onChange: setter,
-            }}
-          >
-            <Formulario />
-          </ClienteContext.Provider>
-          <div className={styles.btn}>
-            <Button label='Agregar' onClick={showForm} raised primary />
+    <>
+      <Header handleSession={logout} />
+      <div style={{ background: 'white' }}>
+        {loadingClientes && <Loading />}
+        {errorClientes && (
+          <ErrorMsg errorMsg='Hubo un error al obtener los datos' />
+        )}
+        {showTable && (
+          <div className={styles.root}>
+            <ClienteContext.Provider
+              value={{
+                state,
+                dialog,
+                showForm,
+                hideForm,
+                saveForm,
+                dialogType,
+                handleDelete,
+                handleUpdateForm,
+                onChange: setter,
+              }}
+            >
+              <Formulario />
+            </ClienteContext.Provider>
+            <div className={styles.btn}>
+              <Button label='Agregar' onClick={showForm} raised primary />
+            </div>
+            <div class='table-responsive'>
+              <List
+                data={dataTable}
+                handleDelete={handleDelete}
+                handleUpdate={handleUpdate}
+              />
+            </div>
           </div>
-          <div class='table-responsive'>
-            <List
-              data={dataTable}
-              handleDelete={handleDelete}
-              handleUpdate={handleUpdate}
-            />
-          </div>
-        </div>
-      )}
-      {/* {error && <ErrorMsg errorMsg='Hubo un error al obtener los datos' />} */}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
